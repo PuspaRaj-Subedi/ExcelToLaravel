@@ -21,6 +21,6 @@ Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-//Route::get('/index', [App\Http\Controllers\HomeController::class, 'test'])->name('test');
+Route::get('/test', [App\Http\Controllers\HomeController::class, 'test'])->name('test');
 Route::get('/todo/imports',[App\Http\Controllers\TodoController::class,'show']);
 Route::post('/todo/imports',[App\Http\Controllers\TodoController::class,'store'])->name('todo.store');

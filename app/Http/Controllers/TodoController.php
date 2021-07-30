@@ -18,46 +18,43 @@ class TodoController extends Controller
      */
     public function show()
     {
-        // $path = app_path() . "/Models";
-
-        // function getModels($path){
-        //     $out = [];
-        //     $results = scandir($path);
-        //     foreach ($results as $result) {
-        //         if ($result === '.' or $result === '..') continue;
-        //         $filename = $path . '/' . $result;
-        //         if (is_dir($filename)) {
-        //             $out = array_merge($out, getModels($filename));
-        //         }else{
-        //             $out[] = substr($filename,0,-4);
-        //         }
-        //     }
-        //     return $out;
-        // }
-
-        // dd(getModels($path));
-        function getModels($path, $namespace){
+        // Scan given path and return the name of file without extension
+        function getModels($path)
+        {
             $out = [];
-
-            $iterator = new \RecursiveIteratorIterator(
-                new \RecursiveDirectoryIterator(
-                    $path
-                ), \RecursiveIteratorIterator::SELF_FIRST
-            );
-            foreach ($iterator as $item) {
-                /**
-                 * @var \SplFileInfo $item
-                 */
-                if($item->isReadable() && $item->isFile() && mb_strtolower($item->getExtension()) === 'php'){
-                    $out[] =
-                        str_replace("/", "\\", mb_substr($item->getRealPath(), mb_strlen($path), -4));
+            $results = scandir($path);
+            foreach ($results as $result) {
+                if ($result === '.' or $result === '..') continue; // Avoiding . and .. folders
+                $filename = $path . '/' . $result;
+                if (is_dir($filename)) {
+                    $out = array_merge($out, getModels($filename)); // Recurssion if path is dir
+                }else{
+                    $out[] = substr($filename,0,-4); // Removing .php extension from name
                 }
             }
             return $out;
-    }
-    $models = getModels(app_path("Models/"), "App\\Models\\");
+        }
 
-    return view('todo')->with('models', $models );
+        $data=[];
+
+        // Retriving Models
+        $tbls=getModels(app_path() . "/Models");
+
+        // Retriving name and fields of Models as key=>value
+        foreach ($tbls as $key => $value) {
+            $n= \Str::snake(last(explode("/",$value))); // Retriving last element of array as snake_case
+            $data[$n] = \Schema::getColumnListing($n); // Retriving columns of tables from db schema
+        }
+
+        /*
+        Model file name must be in PascalCase
+        and the model class name inside the file must be in snake_case inorder to work
+        dd($data) if you see any import mistakes to verify the correct name and fields are retrived
+        */
+
+        // dd($data); 
+
+        return view('todo')->with('models', $data );
     }
 
 
