@@ -47,11 +47,13 @@ class HomeController extends Controller
         $data=[];
 
         // Retriving Models
-        $tbls=getModels(app_path() . "/Models");
+        $tbls=getModels(app_path() . "/Model");
 
         // Retriving name and fields of Models as key=>value
         foreach ($tbls as $key => $value) {
             $fn=last(explode("\\",$value)); // Retriving fully qualified name of model
+            $fn=\Str::replace('app', 'App', $fn);
+            $fn=\Str::replace('/', '\\', $fn);
             $n= \Str::snake(last(explode("/",$value))); // Retriving last element of array as snake_case
             $data[$n] = [$fn, \Schema::getColumnListing($n)]; // Retriving columns of tables from db schema
         }

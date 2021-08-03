@@ -2,7 +2,6 @@
 
 namespace App\Imports;
 
-use App\Models\Todo;
 use Illuminate\Validation\Rules\Unique;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\Importable;
@@ -20,16 +19,21 @@ class TodosImport implements ToModel,SkipsOnError, WithHeadingRow, WithValidatio
     *
     * @return \Illuminate\Database\Eloquent\Model|null
     */
+    public function __construct($modelFdn)
+    {
+        $this->modelName=$modelFdn;
+    }
     public function model(array $row)
     {
         // dd($row);
-        
+        $crsr=[];
+        foreach ($row as $key => $value) {
+            $crsr[$key]=$value;
+        }
 
-        return new Todo([
-            'name' => $row['name'],
-            'address' => $row['address'],
-            'phone' => $row['phone'],
-        ]);
+        dd($crsr);
+
+        return new $this->modelName($crsr);
     }
     public function rules(): array
     {

@@ -38,12 +38,15 @@ class TodoController extends Controller
         $data=[];
 
         // Retriving Models
-        $tbls=getModels(app_path() . "/Models");
+        $tbls=getModels(app_path() . "/Model");
 
         // Retriving name and fields of Models as key=>value
         foreach ($tbls as $key => $value) {
+            $fn=last(explode("\\",$value)); // Retriving fully qualified name of model
+            $fn=\Str::replace('app', 'App', $fn);
+            $fn=\Str::replace('/', '\\', $fn);
             $n= \Str::snake(last(explode("/",$value))); // Retriving last element of array as snake_case
-            $data[$n] = \Schema::getColumnListing($n); // Retriving columns of tables from db schema
+            $data[$n] = [$fn, \Schema::getColumnListing($n)]; // Retriving columns of tables from db schema
         }
 
         /*
@@ -52,8 +55,7 @@ class TodoController extends Controller
         dd($data) if you see any import mistakes to verify the correct name and fields are retrived
         */
 
-        // dd($data); 
-
+        
         return view('todo')->with('models', $data );
     }
 
@@ -82,10 +84,11 @@ class TodoController extends Controller
         $path = $request->file('file')->getRealPath();
         // $path1 = $request->file('file')->store('temp');
         // $path=public_path('app').'/'.$path1;
-
-        $import = new TodosImport;
+        
+        $import = new TodosImport($request->models);
+        
         $import->import($path);
-       // dd($import->errors());
+       dd($import->errors());
         // Excel::import(new TodosImport, $file);
         return back()->withStatus('Excel File imported successfully');
     }

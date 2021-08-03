@@ -90,8 +90,8 @@
                                 <label for="models">Choose a Model:</label>
                                 <select class="form-group" id="models" name="models">
                                 <option value=""> -- Please select Model To Import --</option>
-                                @foreach($models as $model)
-                                <option value="{{$model}}">{{$model}}</option>
+                                @foreach($models as $key=>$model)
+                                <option value="{{$model[0]}}">{{$key}}</option>
                                 @endforeach
                                 </select>
                             </div>
