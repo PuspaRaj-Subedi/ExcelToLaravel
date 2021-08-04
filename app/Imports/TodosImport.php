@@ -19,21 +19,26 @@ class TodosImport implements ToModel,SkipsOnError, WithHeadingRow, WithValidatio
     *
     * @return \Illuminate\Database\Eloquent\Model|null
     */
-    public function __construct($modelFdn)
+    public function __construct($modelFqn)
     {
-        $this->modelName=$modelFdn;
+        $this->track=0;
+        [$this->modelFQN,$this->modelName]=explode(":",$modelFqn);
     }
     public function model(array $row)
     {
         // dd($row);
         $crsr=[];
+
+        // Getting schema for field validation
+        $flds=\Schema::getColumnListing($this->modelName);
+        $flds_lower=array_map("strtolower",$flds);
         foreach ($row as $key => $value) {
-            $crsr[$key]=$value;
+            if(!(false===$tmp=array_search($key,$flds_lower))){
+                $crsr[$flds[$tmp]]=$value;
+            }
         }
-
-        dd($crsr);
-
-        return new $this->modelName($crsr);
+        $this->track++;
+        return new $this->modelFQN($crsr);
     }
     public function rules(): array
     {

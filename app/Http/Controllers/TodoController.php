@@ -46,7 +46,7 @@ class TodoController extends Controller
             $fn=\Str::replace('app', 'App', $fn);
             $fn=\Str::replace('/', '\\', $fn);
             $n= \Str::snake(last(explode("/",$value))); // Retriving last element of array as snake_case
-            $data[$n] = [$fn, \Schema::getColumnListing($n)]; // Retriving columns of tables from db schema
+            $data[$n] = [$fn.":".$n]; // Retriving columns of tables from db schema
         }
 
         /*
@@ -88,9 +88,19 @@ class TodoController extends Controller
         $import = new TodosImport($request->models);
         
         $import->import($path);
-       dd($import->errors());
+       if(count($err=$import->errors())){
+
+        // Gathering error info in plain text
+           $msg="";
+           foreach ($err as $value) {
+               $msg.="\n".$value->getMessage();
+           }
+       }
+       else{
+           $msg=$request->models.' File imported '.$import->track.' fields successfully';
+       }
         // Excel::import(new TodosImport, $file);
-        return back()->withStatus('Excel File imported successfully');
+        return back()->withStatus($msg);
     }
 
 
