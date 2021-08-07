@@ -67,7 +67,7 @@
         <div class="container">
 
             <div class="row mt-2">
-                <div class="col-md-6 offset-md-3">
+                <div class="col-md-6 offset-md-1">
                     <div class="card" >
                         <div class="card-body">
                           <h5 class="card-title">Import Excell</h5>
@@ -84,14 +84,14 @@
                             </div>
                             @endif
                           <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                          <form action="{{route('todo.store')}}" method="post" enctype="multipart/form-data">
+                          <form action="{{route('import.store')}}" method="post" enctype="multipart/form-data">
                             @csrf
                             <div class="form-control">
                                 <label for="models">Choose a Model:</label>
                                 <select class="form-group" id="models" name="models">
                                 <option value=""> -- Please select Model To Import --</option>
                                 @foreach($models as $key=>$model)
-                                <option value="{{$model[0]}}">{{$key}}</option>
+                                <option value="{{$model[0]}}">{{Str::ucfirst($key)}}</option>
                                 @endforeach
                                 </select>
                             </div>
@@ -105,7 +105,26 @@
                       </div>
 
                 </div>
-                <div class="col-lg-4"></div>
+                <div class="col-lg-4">
+                  <h2>Download Sample</h2>
+                  <form action="{{route('export')}}" method="post">
+                            @csrf
+                      <div class="card" >
+                          <div class="card-body">
+                            <div class="form-control">
+                                <label for="models">Choose a Model:</label>
+                                <select class="form-group" id="models" name="models">
+                                <option value=""> -- Model for sample xls --</option>
+                                @foreach($models as $key=>$model)
+                                <option value="{{$model[0]}}">{{Str::ucfirst($key)}}</option>
+                                @endforeach
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Download Sample</button>
+                          </div>
+                      </div>
+                  </form>
+                </div>
             </div>
         </div>
 

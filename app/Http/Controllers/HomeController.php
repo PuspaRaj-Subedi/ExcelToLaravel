@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Excel;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -27,6 +28,7 @@ class HomeController extends Controller
     }
     public function test()
     {
+       
         // Scan given path and return the name of file without extension
         function getModels($path)
         {

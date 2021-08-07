@@ -2,7 +2,6 @@
 
 namespace App\Imports;
 
-use Illuminate\Validation\Rules\Unique;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\SkipsErrors;
@@ -12,7 +11,7 @@ use Maatwebsite\Excel\Concerns\WithValidation;
 
 
 
-class TodosImport implements ToModel,SkipsOnError, WithHeadingRow, WithValidation
+class DbImport implements ToModel,SkipsOnError, WithHeadingRow, WithValidation
 {
     use Importable, SkipsErrors;    /**
     * @param array $row
